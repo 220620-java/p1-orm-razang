@@ -1,26 +1,27 @@
-package com.testing.orm;
+package com.revature.razangorm.orm;
 
-
-
-import java.lang.reflect.Array;
+// java imports
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringJoiner;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// local imports
+import com.revature.razangorm.annotations.ORMIgnore;
+import com.revature.razangorm.annotations.Subclass;
+
 /**
- * @author Colby Tang
- * @author Team Synergy
+ * @author Team Razang
  */
 public class ObjectRelationMapper {
+
     // Call method example: String sqlQuery = ObjectRelationMapper.insertObject(student, "users");
     // Returns something like
     // INSERT INTO users (id,firstName,lastName,username,email,userType,salt,major,gpa) VALUES (?,?,?,?,?,?,?,?,?);
     /**
      * Takes an object and returns an SQL insert statement to insert into database.
+     * @author Colby Tang
      */
     public static String createObject (Object obj, String tableName) {
         Class<?> objClass = obj.getClass();
@@ -44,6 +45,9 @@ public class ObjectRelationMapper {
         return returnQuery;
     }
 
+    /** WORK IN PROGRESS
+     * @author Colby Tang
+    */
     public static String getObjectById (Object obj, int id, String tableName) {
         Class<?> objClass = obj.getClass();
         Field[] fields = getFields(objClass);
@@ -55,6 +59,9 @@ public class ObjectRelationMapper {
         return returnQuery;
     }
 
+    /** Returns the fields of a class and its superclasses
+     * @author Colby Tang
+     */
     public static Field[] getFields (Class<?> objClass) {
         Field[] fields = objClass.getDeclaredFields();
         
