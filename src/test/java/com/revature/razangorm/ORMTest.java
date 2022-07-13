@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import com.revature.razangorm.models.Customer;
-import com.revature.razangorm.orm.ObjectRelationMapper;
+import com.revature.razangorm.orm.QueryMapper;
 
 public class ORMTest {
 
@@ -13,7 +13,7 @@ public class ORMTest {
     public void updateObjectByEmail () {
         Customer customer = new Customer(1, "raza@gmail.com", "razaghulam");
         try {
-		    String actual = ObjectRelationMapper.updateObjectByEmail(customer, "raza.ghulam@gmail.com", "customer");
+		    String actual = QueryMapper.updateObjectByEmail(customer, "raza.ghulam@gmail.com", "customer");
             String expected = "update customer set email=? where customer_id =?";
             assertEquals(expected, actual);
         }

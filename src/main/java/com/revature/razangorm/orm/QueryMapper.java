@@ -14,7 +14,7 @@ import com.revature.razangorm.annotations.Subclass;
 /**
  * @author Team Razang
  */
-public class ObjectRelationMapper {
+public class QueryMapper {
 
     // Call method example: String sqlQuery = ObjectRelationMapper.insertObject(student, "users");
     // Returns something like
@@ -49,7 +49,7 @@ public class ObjectRelationMapper {
         return insertQuery += valuesQuery;
     }
 
-    /** WORK IN PROGRESS
+    /** Gets the object's id field and generates a query
      * @author Colby Tang
     */
     public static String getObjectById (Object obj, String tableName) {
