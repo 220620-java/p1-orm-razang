@@ -85,10 +85,9 @@ public class QueryMapper {
         fields = Stream.of(fields)
         .filter(field -> !field.isAnnotationPresent(ORMIgnore.class))
         .collect(Collectors.toList())
-        .toArray(null);
+        .toArray(Field[]::new);
         return fields;
     }
-
     
     /**
      * 
@@ -101,7 +100,6 @@ public class QueryMapper {
      * @author razaghulam
      */
     // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
-    
     public static String updateObjectByEmail(Object obj, String eMail, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
     	String c_id = objClass.getDeclaredField("customer_id").getName();
@@ -122,7 +120,6 @@ public class QueryMapper {
      */
     // Expected sample output: returnQuery = "select * from Customer where username = ?"; 
     public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
-    	
     	Class<?> objClass = obj.getClass(); 
     	String username = objClass.getDeclaredField("username").getName();
     	String returnQuery = "select * from " + tableName + " where " + username + " =?"; 
@@ -132,7 +129,6 @@ public class QueryMapper {
     
     // Expected sample output: returnQuery  "delete from Customer where  customer_id = ?";
     public static String deleteObject(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
-    	
     	Class<?> objClass = obj.getClass();
     	String customer_id = objClass.getDeclaredField("customer_id").getName();
     	String returnQuery = "delete from " + tableName + " where " + customer_id + " =?"; 
