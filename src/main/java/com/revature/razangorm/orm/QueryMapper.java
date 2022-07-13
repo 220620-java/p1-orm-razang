@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import com.revature.razangorm.annotations.Id;
 import com.revature.razangorm.annotations.ORMIgnore;
 import com.revature.razangorm.annotations.Subclass;
+import com.revature.razangorm.annotations.Username; 
 
 /**
  * @author Team Razang
@@ -55,10 +56,10 @@ public class QueryMapper {
     public static String getObjectById (Object obj, String tableName) {
         Class<?> objClass = obj.getClass();
         Field[] fields = getFields(objClass);
-        Field idField = null;
+        String idField = null;
         for (Field field : fields) {
             if (field.isAnnotationPresent(Id.class)) {
-                idField = field;
+                idField = field.getName();
                 break;
             }
         }
@@ -102,7 +103,7 @@ public class QueryMapper {
      */
     // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
     
-    public static String updateObjectByEmail(Object obj, String eMail, String tableName) throws NoSuchFieldException, SecurityException {
+    public static String updateObject(Object obj, Object updatedObj, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
     	String c_id = objClass.getDeclaredField("customer_id").getName();
     	String  email = objClass.getDeclaredField("email").getName(); 
@@ -124,11 +125,27 @@ public class QueryMapper {
     public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
     	
     	Class<?> objClass = obj.getClass(); 
-    	String username = objClass.getDeclaredField("username").getName();
-    	String returnQuery = "select * from " + tableName + " where " + username + " =?"; 
-    	return returnQuery; 
+    	Field[] fields = getFields(objClass); 
+    	String username = ""; 
+    	for (Field field: fields) {
+    		if (field.isAnnotationPresent(Username.class)) {
+    			username = field.getName(); 
+    			break; 
+    		}
+    	}
+    	 return "select * from " + tableName + " where " + username + " =?"; 
+    	 
     }
     
+    /**
+     * 
+     * @param obj
+     * @param tableName
+     * @return
+     * @throws NoSuchFieldException
+     * @throws SecurityException
+     * @author razaghulam
+     */
     
     // Expected sample output: returnQuery  "delete from Customer where  customer_id = ?";
     public static String deleteObject(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
@@ -139,6 +156,20 @@ public class QueryMapper {
     	
 		return returnQuery;
     }
+    
+    /**
+     * 
+     * @param tableName
+     * @return
+     */
+    public static String readObjects(String tableName) {
+    	
+    	String returnQuery = "select * from " + tableName; 
+		return returnQuery;
+    	
+    }
+    
+    
     
     
     
