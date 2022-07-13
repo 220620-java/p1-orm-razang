@@ -1,4 +1,4 @@
-package com.revature.razangorm.annotations;
+package com.revature.razangorm.models;
 
 public class Customer {
 	

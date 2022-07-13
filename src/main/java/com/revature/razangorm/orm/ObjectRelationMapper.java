@@ -7,8 +7,6 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.revature.razangorm.annotations.Customer;
-// local imports
 import com.revature.razangorm.annotations.Id;
 import com.revature.razangorm.annotations.ORMIgnore;
 import com.revature.razangorm.annotations.Subclass;
@@ -86,7 +84,8 @@ public class ObjectRelationMapper {
         // Filter out any fields with the ORMIgnore annotation
         fields = Stream.of(fields)
         .filter(field -> !field.isAnnotationPresent(ORMIgnore.class))
-        .collect(Collectors.toList()).toArray(null);
+        .collect(Collectors.toList())
+        .toArray(Field[]::new);
         return fields;
     }
 
@@ -94,24 +93,11 @@ public class ObjectRelationMapper {
     // String sql = "update Customer "
 	//+ "set email=? " 
 	//+ "where customer_id=?";
-    
-    public static void updateObjectByEmail(Object obj, String eMail, String tableName) throws NoSuchFieldException, SecurityException {
+    public static String updateObjectByEmail(Object obj, String eMail, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
     	String c_id = objClass.getDeclaredField("customer_id").getName();
     	String  email = objClass.getDeclaredField("email").getName(); 
     	String returnQuery = "update " + tableName + " set " + email + "=? " + "where " + c_id + " =?";  
-    	System.out.println(returnQuery);
-    	
-    	
-    	
-    	
+    	return returnQuery;
     }
-    
-    //Tester method
-    public static void main(String[] args) throws NoSuchFieldException, SecurityException {
-    	
-    	//Mock object
-		Customer customer = new Customer(1, "raza@gmail.com", "razaghulam"); 
-		updateObjectByEmail(customer, "raza.ghulam@gmail.com", "customer"); 
-	}
 }
