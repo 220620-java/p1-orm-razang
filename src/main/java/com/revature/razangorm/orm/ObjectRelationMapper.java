@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // local imports
+import com.revature.razangorm.annotations.Id;
 import com.revature.razangorm.annotations.ORMIgnore;
 import com.revature.razangorm.annotations.Subclass;
 
@@ -28,35 +29,43 @@ public class ObjectRelationMapper {
         Field[] fields = getFields(objClass);
         
         // Create the insert fields
-        String returnQuery = "INSERT INTO " + tableName + " (";
-        StringJoiner joiner = new StringJoiner(",");
+        String insertQuery = "INSERT INTO " + tableName + " (";
+        String valuesQuery = " VALUES (";
+        StringJoiner insertJoiner = new StringJoiner(",");
+        StringJoiner valuesJoiner = new StringJoiner(",");
         Stream<Field> fieldsStream = Arrays.stream(fields);
-        fieldsStream.forEach(field -> joiner.add(field.getName()));
-        returnQuery += joiner.toString();
-        returnQuery += ")";
+        fieldsStream.forEach(
+            field -> {
+                // Add each field separated by a comma
+                insertJoiner.add(field.getName());
+
+                // Add ? for each field in fields
+                valuesJoiner.add("?");
+            }
+        );
+        insertQuery += insertJoiner.toString();
+        insertQuery += ")";
         
-        // Add ? for each field in fields
-        returnQuery += " VALUES (";
-        StringJoiner joiner2 = new StringJoiner(",");
-        Stream<Field> fieldsStream2 = Arrays.stream(fields);
-        fieldsStream2.forEach(field -> joiner2.add("?"));
-        returnQuery += joiner2.toString();
-        returnQuery += ");";
-        return returnQuery;
+        valuesQuery += valuesJoiner.toString() + ");";
+        return insertQuery += valuesQuery;
     }
 
     /** WORK IN PROGRESS
      * @author Colby Tang
     */
-    public static String getObjectById (Object obj, int id, String tableName) {
+    public static String getObjectById (Object obj, String tableName) {
         Class<?> objClass = obj.getClass();
         Field[] fields = getFields(objClass);
+        Field idField = null;
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                idField = field;
+                break;
+            }
+        }
 
-        // Create the SELECT fields
-        String returnQuery = "SELECT * FROM " + tableName + "WHERE ";
-        returnQuery += ")";
-
-        return returnQuery;
+         // Create the SELECT fields
+        return "SELECT * FROM " + tableName + " WHERE " + idField + "=?";
     }
 
     /** Returns the fields of a class and its superclasses
