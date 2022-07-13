@@ -85,14 +85,23 @@ public class QueryMapper {
         fields = Stream.of(fields)
         .filter(field -> !field.isAnnotationPresent(ORMIgnore.class))
         .collect(Collectors.toList())
-        .toArray(Field[]::new);
+        .toArray(null);
         return fields;
     }
 
     
-    // String sql = "update Customer "
-	//+ "set email=? " 
-	//+ "where customer_id=?";
+    /**
+     * 
+     * @param obj passed by caller
+     * @param eMail: new email
+     * @param tableName: table where email will be updated
+     * @return sql query
+     * @throws NoSuchFieldException
+     * @throws SecurityException
+     * @author razaghulam
+     */
+    // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
+    
     public static String updateObjectByEmail(Object obj, String eMail, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
     	String c_id = objClass.getDeclaredField("customer_id").getName();
@@ -100,4 +109,45 @@ public class QueryMapper {
     	String returnQuery = "update " + tableName + " set " + email + "=? " + "where " + c_id + " =?";  
     	return returnQuery;
     }
+    
+    /**
+     * 
+     * @param obj: custome object passed by caller
+     * @param n: username to search for
+     * @param tableName: table to search in
+     * @return sql query 
+     * @throws NoSuchFieldException
+     * @throws SecurityException
+     * @author razaghulam
+     */
+    // Expected sample output: returnQuery = "select * from Customer where username = ?"; 
+    public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
+    	
+    	Class<?> objClass = obj.getClass(); 
+    	String username = objClass.getDeclaredField("username").getName();
+    	String returnQuery = "select * from " + tableName + " where " + username + " =?"; 
+    	return returnQuery; 
+    }
+    
+    
+    // Expected sample output: returnQuery  "delete from Customer where  customer_id = ?";
+    public static String deleteObject(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
+    	
+    	Class<?> objClass = obj.getClass();
+    	String customer_id = objClass.getDeclaredField("customer_id").getName();
+    	String returnQuery = "delete from " + tableName + " where " + customer_id + " =?"; 
+    	
+		return returnQuery;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
