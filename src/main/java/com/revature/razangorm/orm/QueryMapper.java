@@ -103,11 +103,17 @@ public class QueryMapper {
      */
     // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
     
-    public static String updateObject(Object obj, Object updatedObj, String tableName) throws NoSuchFieldException, SecurityException {
+    public static String updateObject(Object obj, String[] updateFields, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
+    	
     	String c_id = objClass.getDeclaredField("customer_id").getName();
     	String  email = objClass.getDeclaredField("email").getName(); 
-    	String returnQuery = "update " + tableName + " set " + email + "=? " + "where " + c_id + " =?";  
+    	String returnQuery = "update " + tableName + " set "; 
+    	for(String field: updateFields) {
+    		returnQuery += field + " =?,"; 
+    	}
+    	returnQuery = returnQuery.replace(", 4", " "); 
+    	returnQuery += " where " + c_id + " =?";  
     	return returnQuery;
     }
     
