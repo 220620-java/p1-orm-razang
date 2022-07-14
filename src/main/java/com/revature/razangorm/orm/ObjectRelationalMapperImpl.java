@@ -22,13 +22,30 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	public  Object create(Object obj) {
 		// TODO Auto-generated method stub
 		try (Connection conn = connObj.getConnection()) {
+			
 			conn.setAutoCommit(false);
 			String sql = mapper.createObject(obj, "customer"); 
-			PreparedStatement st = conn.prepareStatement(sql);
-			Field[] fields = mapper.getFields(obj.getClass()); 
-			for (Field field: fields) {
-				System.out.println(field);
+			Field[] fields = mapper.getFields(obj.getClass());
+			
+			fields[0].setAccessible(true);
+			String[] autoKeys = {"customer_id"};
+			PreparedStatement st = conn.prepareStatement(sql, autoKeys);
+			
+			 
+			
+			
+			for (int i = 1; i <=fields.length; i++) {
+				fields[i].setAccessible(true);
+				
+				System.out.println(i + ": " + fields[i].
+						get(obj).toString() + ", Type: " + 
+						fields[i].getType().getSimpleName());
+				
+				st.setObject(i, fields[i].get(obj));
+						
 			}
+			
+			
 			
 			
 			
@@ -36,6 +53,9 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		} catch(SQLException e) {
 			e.getStackTrace(); 
 		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -60,6 +80,8 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
 	
 	
 
