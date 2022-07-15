@@ -18,10 +18,10 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 
 	private ConnectionObject connObj = ConnectionObject.getConnectionUtil();
 	private QueryMapper mapper = new QueryMapper(); 
-	List<Object> objects = new ArrayList<>();
+	
 	
 	@Override
-	public  Object create(Object obj) {
+	public  Object create(Object obj, String s) {
 		// TODO Auto-generated method stub
 		try (Connection conn = connObj.getConnection()) {
 			
@@ -38,15 +38,16 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
 				st.setObject(i, fields[i].get(obj));
-//				System.out.println(i + ": " + fields[i].
-//						get(obj).toString() + ", Type: " + 
-//						fields[i].getType().getSimpleName() + " --- field name: " 
-//						+ fields[i].getName()
-//						);				
+				System.out.println(i + ": " + fields[i].
+						get(obj).toString() + ", Type: " + 
+						fields[i].getType().getSimpleName() + " --- field name: " 
+						+ fields[i].getName()
+						);				
 			}
 			
 			int rowsAdded = st.executeUpdate(); 
 			ResultSet result = st.getGeneratedKeys();
+			System.out.println("size: " + result.getFetchSize());
 			
 			if (result.next() && rowsAdded == 1) {
 //				obj.setCustomer_id(result.getInt("customer_id"));
@@ -70,22 +71,48 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	}
 
 	@Override
-	public Object findAll() {
+	public List<Object> findAll(Object obj, String s) {
 		// TODO Auto-generated method stub
+		List<Object> objects = new ArrayList<>();
+		
 		try (Connection conn = connObj.getConnection()) {
-			String sql = mapper.readObjects("customer"); 
+			String sql = mapper.readObjects(s); 
+			
+			Field[] fields = mapper.getFields(obj.getClass());
+
 			Statement st = conn.createStatement(); 
 			ResultSet result = st.executeQuery(sql); 
 			
+			
 			while(result.next()) {
+				Object myObj = obj.getClass().newInstance();
+				for (int i = 0; i < fields.length; i++) {
+					fields[i].setAccessible(true);
+					fields[i].set(myObj,result.getObject(fields[i].getName())); 
+				
+				}
+				objects.add(myObj); 
+				
 				
 			}
 			
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return null;
+		return objects;
 	}
 
 	@Override

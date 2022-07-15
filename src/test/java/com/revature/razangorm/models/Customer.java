@@ -35,7 +35,7 @@ public class Customer {
 	@Override
 	public String toString() {
 		return "\n	customer_id  " + customer_id + "\n	username  " + username + "\n	birthDate  " + birthDate
-				+ "\n	email  " + email + "\n	phone  " + phone + "\n";
+				+ "\n	email  " + email + "\n	phone  " + phone + "\n\tpassword " + passwd ;
 	}
 
 
