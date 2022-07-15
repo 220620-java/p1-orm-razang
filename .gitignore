@@ -1,7 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/maven,java,eclipse,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,java,eclipse,windows
 
-database.properties
+# database.properties
 
 ### Eclipse ###
 .metadata

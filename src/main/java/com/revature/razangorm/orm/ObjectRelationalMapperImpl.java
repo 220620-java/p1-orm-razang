@@ -17,13 +17,20 @@ import com.revature.razang.utilities.ConnectionObject;
 public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 
 	private ConnectionObject connObj = ConnectionObject.getConnectionUtil();
+	private Connect connObj1 = new Connect(); 
 	private QueryMapper mapper = new QueryMapper(); 
 	
 	
 	@Override
 	public  Object create(Object obj, String s) {
-		// TODO Auto-generated method stub
-		try (Connection conn = connObj.getConnection()) {
+		
+		// Testing 
+		String url = "jdbc:postgresql://razadb-revature.cgxmxwhigjai.us-west-1.rds.amazonaws."
+				+ "com:5432/postgres?currentSchema=myBank"; 
+		String usr = "postgres"; 
+		String pwd="Bunyadi8686"; 
+
+		try (Connection conn = connObj1.AccessDatabase(url, usr, pwd)) {
 			
 			conn.setAutoCommit(false);
 			String sql = mapper.createObject(obj, "customer"); 
