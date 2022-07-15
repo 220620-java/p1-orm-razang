@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +29,37 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			Field[] fields = mapper.getFields(obj.getClass());
 			
 			fields[0].setAccessible(true);
-			String[] autoKeys = {"customer_id"};
+			System.out.println(fields[0].getName() instanceof String);
+			
+			String[] autoKeys = {fields[0].getName()};
 			PreparedStatement st = conn.prepareStatement(sql, autoKeys);
 			
 			 
 			
 			
-			for (int i = 1; i <=fields.length; i++) {
+			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
 				
 				System.out.println(i + ": " + fields[i].
 						get(obj).toString() + ", Type: " + 
-						fields[i].getType().getSimpleName());
+						fields[i].getType().getSimpleName() + " --- field name: " 
+						+ fields[i].getName()
+						);
 				
-				st.setObject(i, fields[i].get(obj));
-						
+				st.setObject(i, fields[i].get(obj));			
 			}
 			
+			int rowsAdded = st.executeUpdate(); 
+			ResultSet result = st.getGeneratedKeys();
 			
-			
-			
-			
+			if (result.next() && rowsAdded == 1) {
+//				obj.setCustomer_id(result.getInt("customer_id"));
+				conn.commit();
+			}else {
+				conn.rollback();
+				return null; 
+			}
+				
 			
 		} catch(SQLException e) {
 			e.getStackTrace(); 
@@ -60,7 +71,7 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return obj;
 	}
 
 	@Override
