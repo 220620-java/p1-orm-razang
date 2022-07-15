@@ -46,4 +46,4 @@ orm.create (User user); // Inserts the user object into the database with all of
 Contact us for any support or questions:
 
 * [Raza Ghulam](https://github.com/raza-bot)
-* [Colby Tang](https://github.com/colbyktang/windtang) colby051@revature.net
+* [Colby Tang](https://github.com/colbyktang) colby051@revature.net
