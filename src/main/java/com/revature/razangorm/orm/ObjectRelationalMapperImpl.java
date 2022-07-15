@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,19 +35,14 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			String[] autoKeys = {fields[0].getName()};
 			PreparedStatement st = conn.prepareStatement(sql, autoKeys);
 			
-			 
-			
-			
 			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
-				
-				System.out.println(i + ": " + fields[i].
-						get(obj).toString() + ", Type: " + 
-						fields[i].getType().getSimpleName() + " --- field name: " 
-						+ fields[i].getName()
-						);
-				
-				st.setObject(i, fields[i].get(obj));			
+				st.setObject(i, fields[i].get(obj));
+//				System.out.println(i + ": " + fields[i].
+//						get(obj).toString() + ", Type: " + 
+//						fields[i].getType().getSimpleName() + " --- field name: " 
+//						+ fields[i].getName()
+//						);				
 			}
 			
 			int rowsAdded = st.executeUpdate(); 
@@ -60,7 +56,6 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 				return null; 
 			}
 				
-			
 		} catch(SQLException e) {
 			e.getStackTrace(); 
 		} catch (IllegalArgumentException e) {
@@ -75,8 +70,21 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	}
 
 	@Override
-	public Object findById(int id) {
+	public Object findAll() {
 		// TODO Auto-generated method stub
+		try (Connection conn = connObj.getConnection()) {
+			String sql = mapper.readObjects("customer"); 
+			Statement st = conn.createStatement(); 
+			ResultSet result = st.executeQuery(sql); 
+			
+			while(result.next()) {
+				
+			}
+			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
