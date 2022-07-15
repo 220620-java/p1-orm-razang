@@ -30,7 +30,7 @@ public class QueryMapper {
         
         // Create the insert fields
         String insertQuery = "INSERT INTO " + tableName + " (";
-        String valuesQuery = " VALUES (";
+        String valuesQuery = " VALUES (default, ";
         StringJoiner insertJoiner = new StringJoiner(",");
         StringJoiner valuesJoiner = new StringJoiner(",");
         Stream<Field> fieldsStream = Arrays.stream(fields);
@@ -40,13 +40,17 @@ public class QueryMapper {
                 insertJoiner.add(field.getName());
 
                 // Add ? for each field in fields
-                valuesJoiner.add("?");
+//                valuesJoiner.add("?");
             }
         );
+        
         insertQuery += insertJoiner.toString();
         insertQuery += ")";
-        
-        valuesQuery += valuesJoiner.toString() + ");";
+        for (int i = 1; i < fields.length; i++) {
+        	valuesQuery += "?, "; 
+        }
+        valuesQuery = valuesQuery.replaceAll(", $", " "); 
+        valuesQuery +=  ");";
         return insertQuery += valuesQuery;
     }
 
