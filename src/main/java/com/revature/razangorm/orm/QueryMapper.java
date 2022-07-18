@@ -37,7 +37,7 @@ public class QueryMapper {
         fieldsStream.forEach(
             field -> {
                 // Add each field separated by a comma
-                insertJoiner.add(field.getName());
+                insertJoiner.add(field.getName().toLowerCase());
 
                 // Add ? for each field in fields
 //                valuesJoiner.add("?");
@@ -54,45 +54,6 @@ public class QueryMapper {
         return insertQuery += valuesQuery;
     }
 
-    /** Gets the object's id field and generates a query
-     * @author Colby Tang
-    */
-    public static String getObjectById (Object obj, String tableName) {
-        Class<?> objClass = obj.getClass();
-        Field[] fields = getFields(objClass);
-        String idField = null;
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(Id.class)) {
-                idField = field.getName();
-                break;
-            }
-        }
-
-         // Create the SELECT fields
-        return "SELECT * FROM " + tableName + " WHERE " + idField + "=?";
-    }
-
-    /** Returns the fields of a class and its superclasses
-     * @author Colby Tang
-     */
-    public static Field[] getFields (Class<?> objClass) {
-        Field[] fields = objClass.getDeclaredFields();
-        
-        // If class is a subclass, get the superclass fields too
-        while (objClass.isAnnotationPresent(Subclass.class)) {
-            objClass = objClass.getSuperclass();
-            Field[] superFields = objClass.getDeclaredFields();
-            fields = Stream.concat(Arrays.stream(superFields), Arrays.stream(fields))
-                    .toArray(Field[]::new);
-        }
-        
-        // Filter out any fields with the ORMIgnore annotation
-        fields = Stream.of(fields)
-        .filter(field -> !field.isAnnotationPresent(ORMIgnore.class))
-        .collect(Collectors.toList()).stream().toArray(Field[]::new);
-        return fields;
-    }
-    
     /**
      * 
      * @param obj passed by caller
@@ -106,9 +67,6 @@ public class QueryMapper {
      * @throws IllegalArgumentException 
      */
     // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
-
-    
-    @SuppressWarnings("null")
 	public static String updateObject(Object obj, String tableName) throws NoSuchFieldException, 
 	SecurityException, IllegalArgumentException, IllegalAccessException {
 
@@ -136,29 +94,17 @@ public class QueryMapper {
     	return returnQuery; 
     }
     
+	 
     /**
      * 
-     * @param obj: custome object passed by caller
-     * @param n: username to search for
-     * @param tableName: table to search in
-     * @return sql query 
-     * @throws NoSuchFieldException
-     * @throws SecurityException
-     * @author razaghulam
+     * @param tableName
+     * @return
      */
-    // Expected sample output: returnQuery = "select * from Customer where username = ?"; 
-    public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
-    	Class<?> objClass = obj.getClass(); 
-    	Field[] fields = getFields(objClass); 
-    	String username = ""; 
-    	for (Field field: fields) {
-    		if (field.isAnnotationPresent(Username.class)) {
-    			username = field.getName(); 
-    			break; 
-    		}
-    	}
-    	 return "select * from " + tableName + " where " + username + " =?"; 
-    	 
+    public static String findAll(String tableName) {
+    	
+    	String returnQuery = "select * from " + tableName; 
+		return returnQuery;
+    	
     }
     
     /**
@@ -192,18 +138,72 @@ public class QueryMapper {
     	String returnQuery = "delete from " + tableName + " where " + id + " =" + val; 
 		return returnQuery;
     }
+   
+    
+    /** Returns the fields of a class and its superclasses
+     * @author Colby Tang
+     */
+    public static Field[] getFields (Class<?> objClass) {
+        Field[] fields = objClass.getDeclaredFields();
+        
+        // If class is a subclass, get the superclass fields too
+        while (objClass.isAnnotationPresent(Subclass.class)) {
+            objClass = objClass.getSuperclass();
+            Field[] superFields = objClass.getDeclaredFields();
+            fields = Stream.concat(Arrays.stream(superFields), Arrays.stream(fields))
+                    .toArray(Field[]::new);
+        }
+        
+        // Filter out any fields with the ORMIgnore annotation
+        fields = Stream.of(fields)
+        .filter(field -> !field.isAnnotationPresent(ORMIgnore.class))
+        .collect(Collectors.toList()).stream().toArray(Field[]::new);
+        return fields;
+    }
     
     /**
      * 
-     * @param tableName
-     * @return
+     * @param obj: custome object passed by caller
+     * @param n: username to search for
+     * @param tableName: table to search in
+     * @return sql query 
+     * @throws NoSuchFieldException
+     * @throws SecurityException
+     * @author razaghulam
      */
-    public static String findAll(String tableName) {
-    	
-    	String returnQuery = "select * from " + tableName; 
-		return returnQuery;
-    	
+    // Expected sample output: returnQuery = "select * from Customer where username = ?"; 
+    public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
+    	Class<?> objClass = obj.getClass(); 
+    	Field[] fields = getFields(objClass); 
+    	String username = ""; 
+    	for (Field field: fields) {
+    		if (field.isAnnotationPresent(Username.class)) {
+    			username = field.getName(); 
+    			break; 
+    		}
+    	}
+    	 return "select * from " + tableName + " where " + username + " =?"; 
+    	 
     }
+   
+    /** Gets the object's id field and generates a query
+     * @author Colby Tang
+    */
+    public static String getObjectById (Object obj, String tableName) {
+        Class<?> objClass = obj.getClass();
+        Field[] fields = getFields(objClass);
+        String idField = null;
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                idField = field.getName();
+                break;
+            }
+        }
+
+         // Create the SELECT fields
+        return "SELECT * FROM " + tableName + " WHERE " + idField + "=?";
+    }
+
     
     
     
