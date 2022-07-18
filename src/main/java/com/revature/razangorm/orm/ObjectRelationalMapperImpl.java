@@ -11,7 +11,11 @@ import java.util.List;
 
 import com.revature.raza.utility.ConnectionObject;
 
-
+/**
+ * 
+ * @author razaghulam
+ *
+ */
 public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 
 	private ConnectionObject connObj = ConnectionObject.getConnectionUtil();
@@ -36,20 +40,13 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			
 			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
-				st.setObject(i, fields[i].get(obj));
-				System.out.println(i + ": " + fields[i].
-						get(obj).toString() + ", Type: " + 
-						fields[i].getType().getSimpleName() + " --- field name: " 
-						+ fields[i].getName()
-						);				
+				st.setObject(i, fields[i].get(obj).toString().toLowerCase());				
 			}
 			
 			int rowsAdded = st.executeUpdate(); 
 			ResultSet result = st.getGeneratedKeys();
-			System.out.println("size: " + result.getFetchSize());
 			
 			if (result.next() && rowsAdded == 1) {
-//				obj.setCustomer_id(result.getInt("customer_id"));
 				conn.commit();
 			}else {
 				conn.rollback();
@@ -75,7 +72,7 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		List<Object> objects = new ArrayList<>();
 		
 		try (Connection conn = connObj.getConnection()) {
-			String sql = mapper.readObjects(s); 
+			String sql = mapper.findAll(s); 
 			
 			Field[] fields = mapper.getFields(obj.getClass());
 
@@ -143,8 +140,7 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			}else {
 				conn.rollback();
 				return null; 
-			}
-			
+			}	
 			
 		}catch(SQLException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();

@@ -124,13 +124,12 @@ public class QueryMapper {
     			id = field.getName(); 
     			val =  field.get(obj).toString(); 
     		} else if (!field.isAnnotationPresent(Id.class)) {
-    			updateFields = updateFields.concat(field.getName().toString()).concat("='").
-    			concat(field.get(obj).toString()).concat("',");
+    			updateFields = updateFields.concat(field.getName().toString()).concat("='").concat(field.get(obj).toString()).concat("',");
     		}
     	}
+    	// Remove the trailing comma. 
 		updateFields = updateFields.replaceAll(",$", " ");
 
-    	
     	String returnQuery = "update " + tableName +  " set " + updateFields.toString() 
     	+ " where " + id + " =" + val; 
     	
@@ -199,7 +198,7 @@ public class QueryMapper {
      * @param tableName
      * @return
      */
-    public static String readObjects(String tableName) {
+    public static String findAll(String tableName) {
     	
     	String returnQuery = "select * from " + tableName; 
 		return returnQuery;

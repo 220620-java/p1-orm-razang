@@ -8,29 +8,33 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 // Singleton class: This class can have only one instance 
-public class ConnectionObject {
+public class ConnectionObject1 {
 	
-	private static ConnectionObject connObj; 
+	private static ConnectionObject1 connObj; 
 	private Properties property;
 	
 	
 	//must have private constructor so no one can create it is instance
-	private ConnectionObject() {
+	private ConnectionObject1() {
 		
 		property = new Properties(); 
 		
-		InputStream propsFile = ConnectionObject.class.getClassLoader()
+		InputStream propsFile = ConnectionObject1.class.getClassLoader()
 				.getResourceAsStream("database.properties");
 		try {
 			property.load(propsFile);
 		} catch (IOException e) {
+			// Default database configuration
+			property.setProperty("url", "jdbc:postgresql://localhost:5432/postgres");
+			property.setProperty("usr", "postgres");
+			property.setProperty("pwd", "");
 			e.printStackTrace();
 		}
 	}
 	
-	public static synchronized ConnectionObject getConnectionUtil() {
+	public static synchronized ConnectionObject1 getConnectionUtil() {
 		if (connObj == null) {
-			connObj = new ConnectionObject();
+			connObj = new ConnectionObject1();
 		}
 		return connObj;
 	}
