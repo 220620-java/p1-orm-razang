@@ -111,13 +111,22 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	}
 
 	@Override
-	public Object update(Object obj, Object newObj, String c) {
+	public Object update(Object obj, String c) {
 		// TODO Auto-generated method stub
 		try (Connection conn = connObj.getConnection()) {
+			conn.setAutoCommit(false);
+			String sql = mapper.updateObject(obj, c); 
+			PreparedStatement st = conn.prepareStatement(sql); 
 			
-			String sql = mapper.updateObject(obj, newOBj, c); 
+			int rowUpdated = st.executeUpdate(); 
+			if (rowUpdated == 1) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
 			
-		}catch (SQLException e) {
+			
+		}catch (SQLException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		

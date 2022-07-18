@@ -102,11 +102,15 @@ public class QueryMapper {
      * @throws NoSuchFieldException
      * @throws SecurityException
      * @author razaghulam
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
      */
     // Expected sample output: returnQuery = "update Customer set email=? where customer_id=?";
 
     
-    public static String updateObject(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
+    @SuppressWarnings("null")
+	public static String updateObject(Object obj, String tableName) throws NoSuchFieldException, 
+	SecurityException, IllegalArgumentException, IllegalAccessException {
 
     	Class<?> objClass = obj.getClass();
     	
@@ -123,9 +127,7 @@ public class QueryMapper {
     			updateFields.append(field.getName()).append("='").append(field.get(obj) + "', ");
     		}
     	}
-    	
-    	
-    	
+
     	
     	String returnQuery = "update " + tableName +  " set " + updateFields.toString() 
     	+ " where " + id + " =" + val; 
