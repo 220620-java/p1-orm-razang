@@ -1,6 +1,7 @@
 package com.revature.razangorm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.sql.Statement;
 import java.sql.Connection;
@@ -16,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.revature.razang.utilities.ConnectionObject;
+import com.revature.razang.utilities.ConnectionObject1;
 import com.revature.razangorm.models.Account;
 import com.revature.razangorm.models.Customer;
 import com.revature.razangorm.orm.ObjectRelationalMapper;
@@ -28,7 +29,7 @@ public class ORMTest {
 	ObjectRelationalMapper test = new ObjectRelationalMapperImpl();
 
 	@Mock
-	private ConnectionObject connObj;
+	private ConnectionObject1 connObj;
 
 	@Mock
 	private Statement st;
@@ -88,5 +89,21 @@ public class ORMTest {
 		// List<Object> accObjs = test.findAll(account, "BankAccount"); 
 		// System.out.println(accObjs);
 
+	}
+	
+	@Test
+	public void testUpate() {
+		 Customer customer = new Customer(2, "razaghulam@gmail.com", new Date(1999-01-01),
+	        		"razaghulam123", "10210101010", "12345");
+		
+		
+		 assertNotNull(test.update(customer, "customer"));
+	}
+	
+	@Test 
+	public void testDelete() {
+		Customer customer = new Customer(2, "razaghulam@gmail.com", new Date(1999-01-01),
+        		"razaghulam123", "10210101010", "12345");
+		assertNotNull(test.delete(customer, "customer"));
 	}
 }

@@ -1,9 +1,7 @@
 package com.revature.razangorm.orm;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.revature.razang.utilities.ConnectionObject;
+import com.revature.raza.utility.ConnectionObject;
 
 
 public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
@@ -124,22 +122,34 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			} else {
 				conn.rollback();
 			}
-			
-			
 		}catch (SQLException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		return null;
+		return obj;
 	}
 
 	@Override
 	public Object delete(Object obj, String c) {
 		// TODO Auto-generated method stub
-		return null;
+		try (Connection conn = connObj.getConnection()) {
+			conn.setAutoCommit(false);
+			@SuppressWarnings("static-access")
+			String sql = mapper.deleteObject(obj, c); 
+			
+			PreparedStatement st = conn.prepareStatement(sql); 
+			int rowAffected = st.executeUpdate(); 
+			if (rowAffected == 1) {
+				conn.commit();
+			}else {
+				conn.rollback();
+				return null; 
+			}
+			
+			
+		}catch(SQLException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 	
 

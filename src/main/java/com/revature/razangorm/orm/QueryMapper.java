@@ -115,18 +115,20 @@ public class QueryMapper {
     	Class<?> objClass = obj.getClass();
     	
     	Field[] fields = objClass.getDeclaredFields(); 
-    	StringBuilder updateFields = null;
+    	String updateFields = new String();
     	String id = null, val = null; 
     	
     	for (Field field: fields) {
     		field.setAccessible(true);
     		if (field.isAnnotationPresent(Id.class)) {
     			id = field.getName(); 
-    			val = (String) field.get(obj); 
+    			val =  field.get(obj).toString(); 
     		} else if (!field.isAnnotationPresent(Id.class)) {
-    			updateFields.append(field.getName()).append("='").append(field.get(obj) + "', ");
+    			updateFields = updateFields.concat(field.getName().toString()).concat("='").
+    			concat(field.get(obj).toString()).concat("',");
     		}
     	}
+		updateFields = updateFields.replaceAll(",$", " ");
 
     	
     	String returnQuery = "update " + tableName +  " set " + updateFields.toString() 
@@ -170,12 +172,25 @@ public class QueryMapper {
      * @author razaghulam
      */
     
-    // Expected sample output: returnQuery  "delete from Customer where  customer_id = ?";
+    // Expected sample output: returnQuery  "delete from Customer where  customer_id = val";
     public static String deleteObject(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass();
-    	String customer_id = objClass.getDeclaredField("customer_id").getName();
-    	String returnQuery = "delete from " + tableName + " where " + customer_id + " =?"; 
-    	
+    	String id = null, val=null; 
+    	Field[] fields = objClass.getDeclaredFields(); 
+    	for (Field field: fields) {
+    		if (field.isAnnotationPresent(Id.class)) {
+    			field.setAccessible(true);
+    			id = field.getName(); 
+    			try {
+					val = field.get(obj).toString();
+					break; 
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+    		}
+    	}
+    	String returnQuery = "delete from " + tableName + " where " + id + " =" + val; 
 		return returnQuery;
     }
     
