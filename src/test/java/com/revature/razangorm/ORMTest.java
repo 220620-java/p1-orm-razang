@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.revature.razang.utilities.ConnectionObject1;
+import com.revature.razang.utilities.ConnectionObject;
 import com.revature.razangorm.models.Account;
 import com.revature.razangorm.models.Customer;
 import com.revature.razangorm.orm.ObjectRelationalMapper;
@@ -29,7 +29,7 @@ public class ORMTest {
 	ObjectRelationalMapper test = new ObjectRelationalMapperImpl();
 
 	@Mock
-	private ConnectionObject1 connObj;
+	private ConnectionObject connObj;
 
 	@Mock
 	private Statement st;

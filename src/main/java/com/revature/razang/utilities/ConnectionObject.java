@@ -24,6 +24,10 @@ public class ConnectionObject {
 		try {
 			property.load(propsFile);
 		} catch (IOException e) {
+			// Default database configuration
+			property.setProperty("url", "jdbc:postgresql://localhost:5432/postgres");
+			property.setProperty("usr", "postgres");
+			property.setProperty("pwd", "");
 			e.printStackTrace();
 		}
 	}

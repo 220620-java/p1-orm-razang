@@ -33,7 +33,6 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			Field[] fields = mapper.getFields(obj.getClass());
 			
 			fields[0].setAccessible(true);
-			System.out.println(fields[0].getName() instanceof String);
 			
 			String[] autoKeys = {fields[0].getName()};
 			PreparedStatement st = conn.prepareStatement(sql, autoKeys);
