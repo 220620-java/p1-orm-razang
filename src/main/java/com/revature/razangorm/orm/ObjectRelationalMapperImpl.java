@@ -75,8 +75,6 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	public List<Object> findAll(Object obj, String s) {
 		// TODO Auto-generated method stub
 		List<Object> objects = new ArrayList<>();
-		System.out.println("......." + 3/2);
-
 		
 		try (Connection conn = connObj.getConnection()) {
 			String sql = mapper.readObjects(s); 
@@ -86,20 +84,14 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			Statement st = conn.createStatement(); 
 			ResultSet result = st.executeQuery(sql); 
 			
-			
 			while(result.next()) {
 				Object myObj = obj.getClass().newInstance();
 				for (int i = 0; i < fields.length; i++) {
 					fields[i].setAccessible(true);
 					fields[i].set(myObj,result.getObject(fields[i].getName())); 
-				
 				}
 				objects.add(myObj); 
-				
-				
 			}
-			
-			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
@@ -119,13 +111,24 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	}
 
 	@Override
-	public Object update(Object obj) {
+	public Object update(Object obj, Object newObj, String c) {
 		// TODO Auto-generated method stub
+		try (Connection conn = connObj.getConnection()) {
+			
+			String sql = mapper.updateObject(obj, newOBj, c); 
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 		return null;
 	}
 
 	@Override
-	public Object delete(Object obj) {
+	public Object delete(Object obj, String c) {
 		// TODO Auto-generated method stub
 		return null;
 	}
