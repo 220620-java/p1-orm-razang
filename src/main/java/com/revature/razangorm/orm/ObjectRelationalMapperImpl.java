@@ -17,23 +17,17 @@ import com.revature.razang.utilities.ConnectionObject;
 public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 
 	private ConnectionObject connObj = ConnectionObject.getConnectionUtil();
-	private Connect connObj1 = new Connect(); 
 	private QueryMapper mapper = new QueryMapper(); 
 	
 	
 	@Override
 	public  Object create(Object obj, String s) {
 		
-		// Testing 
-		String url = "jdbc:postgresql://razadb-revature.cgxmxwhigjai.us-west-1.rds.amazonaws."
-				+ "com:5432/postgres?currentSchema=myBank"; 
-		String usr = "postgres"; 
-		String pwd="Bunyadi8686"; 
-
-		try (Connection conn = connObj1.AccessDatabase(url, usr, pwd)) {
+		
+		try (Connection conn = connObj.getConnection()) {
 			
 			conn.setAutoCommit(false);
-			String sql = mapper.createObject(obj, "customer"); 
+			String sql = mapper.createObject(obj,s); 
 			Field[] fields = mapper.getFields(obj.getClass());
 			
 			fields[0].setAccessible(true);
@@ -81,6 +75,8 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	public List<Object> findAll(Object obj, String s) {
 		// TODO Auto-generated method stub
 		List<Object> objects = new ArrayList<>();
+		System.out.println("......." + 3/2);
+
 		
 		try (Connection conn = connObj.getConnection()) {
 			String sql = mapper.readObjects(s); 

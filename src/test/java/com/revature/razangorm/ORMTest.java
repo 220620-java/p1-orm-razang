@@ -55,5 +55,6 @@ public class ORMTest {
 		Account account = new Account("123344556", 0.00, 1 );
 		List<Object> accObjs = test.findAll(account, "BankAccount"); 
 		System.out.println(accObjs);
+		
 	}
 }
