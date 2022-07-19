@@ -106,4 +106,20 @@ public class ORMTest {
         		"razaghulam123", "10210101010", "12345");
 		assertNotNull(test.delete(customer, "customer"));
 	}
+	
+	@Test
+	public void testFindByName() {
+		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
+        		"razaghulam", "10210101010", "12345");
+		
+		assertNotNull(test.findByName(customer, "customer")); 
+	}
+	
+	@Test 
+	public void testFindById() {
+		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
+        		"razaghulam", "10210101010", "12345");
+		assertNotNull(test.findById(customer, "customer")); 
+
+	}
 }

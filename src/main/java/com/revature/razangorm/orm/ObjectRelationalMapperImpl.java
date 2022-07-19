@@ -146,6 +146,46 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		}
 		return obj;
 	}
+
+	@Override
+	public Object findByName(Object obj, String c) {
+		// TODO Auto-generated method stub
+		try (Connection conn = connObj.getConnection()) {
+			String sql = mapper.findObjectByName(obj, c); 
+			
+			Statement st = conn.createStatement();
+			ResultSet result =st.executeQuery(sql);
+			
+			if  (result.next()) {
+				return obj; 
+			}else {
+				return null; 
+			}
+		}catch (SQLException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
+	@Override
+	public Object findById(Object obj, String c) {
+		// TODO Auto-generated method stub
+		try (Connection conn = connObj.getConnection()) {
+			String sql = mapper.findObjectById(obj, c); 
+			
+			Statement st = conn.createStatement();
+			ResultSet result =st.executeQuery(sql);
+			
+			if  (result.next()) {
+				return obj; 
+			}else {
+				return null; 
+			}
+		}catch (SQLException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
 	
 
 	

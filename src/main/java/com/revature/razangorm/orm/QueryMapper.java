@@ -12,7 +12,7 @@ import com.revature.razangorm.annotations.ORMIgnore;
 import com.revature.razangorm.annotations.Subclass;
 import com.revature.razangorm.annotations.Username; 
 
-/**
+/** This class mainly returns string queries from the class object. 
  * @author Team Razang
  */
 public class QueryMapper {
@@ -172,36 +172,59 @@ public class QueryMapper {
      * @author razaghulam
      */
     // Expected sample output: returnQuery = "select * from Customer where username = ?"; 
-    public static String findObjectByName(Object obj, String n, String tableName) throws NoSuchFieldException, SecurityException {
+    public static String findObjectByName(Object obj, String tableName) throws NoSuchFieldException, SecurityException {
     	Class<?> objClass = obj.getClass(); 
     	Field[] fields = getFields(objClass); 
-    	String username = ""; 
+    	String username = null; 
+    	String value = null; 
     	for (Field field: fields) {
     		if (field.isAnnotationPresent(Username.class)) {
+    			field.setAccessible(true);
     			username = field.getName(); 
+    			try {
+					value = field.get(obj).toString();
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
     			break; 
     		}
     	}
-    	 return "select * from " + tableName + " where " + username + " =?"; 
+    	if (username == null) {
+    		return null; 
+    	}
+    	 return "select * from " + tableName + " where " + username + " ='" + value + "'"; 
     	 
     }
    
     /** Gets the object's id field and generates a query
      * @author Colby Tang
     */
-    public static String getObjectById (Object obj, String tableName) {
+    public static String findObjectById(Object obj, String tableName) {
         Class<?> objClass = obj.getClass();
         Field[] fields = getFields(objClass);
         String idField = null;
+        String idValue = null; 
         for (Field field : fields) {
             if (field.isAnnotationPresent(Id.class)) {
+            	field.setAccessible(true);
                 idField = field.getName();
+                try {
+					idValue = field.get(obj).toString();
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 break;
+                
             }
+        }
+        if (idField == null) {
+        	return null; 
         }
 
          // Create the SELECT fields
-        return "SELECT * FROM " + tableName + " WHERE " + idField + "=?";
+        return "SELECT * FROM " + tableName + " WHERE " + idField + "=" + idValue;
     }
 
     

@@ -7,4 +7,6 @@ public interface ObjectRelationalMapper {
 	public List<Object> findAll(Object obj, String c);
     public Object update(Object obj, String c);
 	public Object delete(Object obj, String c); 
+	public Object findByName(Object obj, String c); 
+	public Object findById(Object obj, String c); 
 }
