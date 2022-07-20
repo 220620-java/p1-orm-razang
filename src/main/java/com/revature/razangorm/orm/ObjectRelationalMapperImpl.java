@@ -1,6 +1,9 @@
 package com.revature.razangorm.orm;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,37 +12,42 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.revature.raza.utility.ConnectionObject;
+import com.revature.razang.utilities.ConnectionObject;
 
 /**
  * 
  * @author razaghulam
- *
+ * @author Colby Tang
  */
 public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 
 	private ConnectionObject connObj = ConnectionObject.getConnectionUtil();
-	private QueryMapper mapper = new QueryMapper(); 
+
+	public ObjectRelationalMapperImpl () {}
 	
-	
+	/** 
+	 * @param obj
+	 * @param s
+	 * @return Object
+	 * @author razaghulam
+	 */
 	@Override
-	public  Object create(Object obj, String s) {
-		
+	public Object create(Object obj, String s) {
 		
 		try (Connection conn = connObj.getConnection()) {
 			
 			conn.setAutoCommit(false);
-			String sql = mapper.createObject(obj,s); 
-			Field[] fields = mapper.getFields(obj.getClass());
+			String sql = QueryMapper.createObject(obj,s); 
+			Field[] fields = QueryMapper.getFields(obj.getClass());
 			
 			fields[0].setAccessible(true);
 			
-			String[] autoKeys = {fields[0].getName()};
+			String[] autoKeys = {fields[0].getName().toLowerCase()};
 			PreparedStatement st = conn.prepareStatement(sql, autoKeys);
 			
 			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
-				st.setObject(i, fields[i].get(obj).toString().toLowerCase());				
+				st.setObject(i, fields[i].get(obj));
 			}
 			
 			int rowsAdded = st.executeUpdate(); 
@@ -52,106 +60,26 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 				return null; 
 			}
 				
-		} catch(SQLException e) {
-			e.getStackTrace(); 
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		} catch(SQLException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace(); 
+		} 
 		return obj;
 	}
 
+	/** 
+	 * @param obj
+	 * @param c
+	 * @return Object
+	 * @author razaghulam
+	 */
 	@Override
-	public List<Object> findAll(Object obj, String s) {
-		// TODO Auto-generated method stub
-		List<Object> objects = new ArrayList<>();
-		
+	public Object findByName(Object obj, String tableName) {
 		try (Connection conn = connObj.getConnection()) {
-			String sql = mapper.findAll(s); 
-			
-			Field[] fields = mapper.getFields(obj.getClass());
-
-			Statement st = conn.createStatement(); 
-			ResultSet result = st.executeQuery(sql); 
-			
-			while(result.next()) {
-				Object myObj = obj.getClass().newInstance();
-				for (int i = 0; i < fields.length; i++) {
-					fields[i].setAccessible(true);
-					fields[i].set(myObj,result.getObject(fields[i].getName())); 
-				}
-				objects.add(myObj); 
+			String sql = QueryMapper.findObjectByName(obj, tableName);
+			if (sql == null) {
+				System.out.println("No username annotation found!");
+				return null;
 			}
-		}catch(SQLException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return objects;
-	}
-
-	@Override
-	public Object update(Object obj, String c) {
-		// TODO Auto-generated method stub
-		try (Connection conn = connObj.getConnection()) {
-			conn.setAutoCommit(false);
-			String sql = mapper.updateObject(obj, c); 
-			PreparedStatement st = conn.prepareStatement(sql); 
-			
-			int rowUpdated = st.executeUpdate(); 
-			if (rowUpdated == 1) {
-				conn.commit();
-			} else {
-				conn.rollback();
-			}
-		}catch (SQLException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return obj;
-	}
-
-	@Override
-	public Object delete(Object obj, String c) {
-		// TODO Auto-generated method stub
-		try (Connection conn = connObj.getConnection()) {
-			conn.setAutoCommit(false);
-			@SuppressWarnings("static-access")
-			String sql = mapper.deleteObject(obj, c); 
-			
-			PreparedStatement st = conn.prepareStatement(sql); 
-			int rowAffected = st.executeUpdate(); 
-			if (rowAffected == 1) {
-				conn.commit();
-			}else {
-				conn.rollback();
-				return null; 
-			}	
-			
-		}catch(SQLException | NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		}
-		return obj;
-	}
-
-	@Override
-	public Object findByName(Object obj, String c) {
-		// TODO Auto-generated method stub
-		try (Connection conn = connObj.getConnection()) {
-			String sql = mapper.findObjectByName(obj, c); 
 			
 			Statement st = conn.createStatement();
 			ResultSet result =st.executeQuery(sql);
@@ -167,11 +95,17 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		return obj;
 	}
 
+	
+	/** 
+	 * @param obj
+	 * @param c
+	 * @return Object
+	 * @author razaghulam
+	 */
 	@Override
 	public Object findById(Object obj, String c) {
-		// TODO Auto-generated method stub
 		try (Connection conn = connObj.getConnection()) {
-			String sql = mapper.findObjectById(obj, c); 
+			String sql = QueryMapper.findObjectById(obj, c); 
 			
 			Statement st = conn.createStatement();
 			ResultSet result =st.executeQuery(sql);
@@ -187,8 +121,90 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		return obj;
 	}
 	
+	/** 
+	 * @param obj
+	 * @param s
+	 * @return List<Object>
+	 * @author razaghulam
+	 */
+	@Override
+	public List<Object> findAll(Class<? extends Object> objClass, String s) {
+		List<Object> objects = new ArrayList<>();
+		
+		try (Connection conn = connObj.getConnection()) {
+			String sql = QueryMapper.findAll(s); 
+			
+			Field[] fields = QueryMapper.getFields(objClass);
+
+			Statement st = conn.createStatement(); 
+			ResultSet result = st.executeQuery(sql); 
+			
+			while(result.next()) {
+				Object myObj = objClass.getConstructor().newInstance();
+				for (int i = 0; i < fields.length; i++) {
+					fields[i].setAccessible(true);
+					fields[i].set(myObj,result.getObject(fields[i].getName())); 
+				}
+				objects.add(myObj); 
+			}
+		} catch(SQLException | IllegalArgumentException | IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return objects;
+	}
 
 	
+	/** 
+	 * @param obj
+	 * @param c
+	 * @return Object
+	 * @author razaghulam
+	 */
+	@Override
+	public Object update(Object obj, String c) {
+		try (Connection conn = connObj.getConnection()) {
+			conn.setAutoCommit(false);
+			String sql = QueryMapper.updateObject(obj, c); 
+			PreparedStatement st = conn.prepareStatement(sql); 
+			
+			int rowUpdated = st.executeUpdate(); 
+			if (rowUpdated == 1) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
+		}catch (SQLException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
 	
+	/** 
+	 * @param obj
+	 * @param c
+	 * @return Object
+	 * @author razaghulam
+	 */
+	@Override
+	public Object delete(Object obj, String c) {
+		try (Connection conn = connObj.getConnection()) {
+			conn.setAutoCommit(false);
+			String sql = QueryMapper.deleteObject(obj, c); 
+			
+			PreparedStatement st = conn.prepareStatement(sql); 
+			int rowAffected = st.executeUpdate(); 
+			if (rowAffected == 1) {
+				conn.commit();
+			}else {
+				conn.rollback();
+				return null; 
+			}	
+			
+		}catch(SQLException | NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
 
 }

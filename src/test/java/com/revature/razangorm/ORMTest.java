@@ -20,13 +20,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.revature.razang.utilities.ConnectionObject;
 import com.revature.razangorm.models.Account;
 import com.revature.razangorm.models.Customer;
+import com.revature.razangorm.models.User;
 import com.revature.razangorm.orm.ObjectRelationalMapper;
 import com.revature.razangorm.orm.ObjectRelationalMapperImpl;
 
 @ExtendWith (MockitoExtension.class)
 public class ORMTest {
 	@InjectMocks
-	ObjectRelationalMapper test = new ObjectRelationalMapperImpl();
+	ObjectRelationalMapper mockORM = new ObjectRelationalMapperImpl();
+
+	ObjectRelationalMapper nonMockORM = new ObjectRelationalMapperImpl();
 
 	@Mock
 	private ConnectionObject connObj;
@@ -54,7 +57,7 @@ public class ORMTest {
 	public void create() {
 		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
         		"razaghulam", "10210101010", "12345");
-        Object c = test.create(customer, "customer");
+        Object c = mockORM.create(customer, "customer");
 		assertEquals(customer, c); 
 
 	}
@@ -77,34 +80,32 @@ public class ORMTest {
 		// List<Object> obj = test.findAll(customer, "customer");
 		// System.out.println(obj);
 		
+		List<Object> allUsers = nonMockORM.findAll(User.class, "users"); 
+		System.out.println(allUsers);
 	}
 	
 	@Test
 	public void testFindAllAccount() {
 		Account account = new Account("123344556", 0.00, 1 );
 
-		List<Object> accObjs = test.findAll(account, "BankAccount"); 
+		List<Object> accObjs = mockORM.findAll(Account.class, "BankAccount"); 
 		System.out.println(accObjs);
-
-		// List<Object> accObjs = test.findAll(account, "BankAccount"); 
-		// System.out.println(accObjs);
-
 	}
 	
 	@Test
-	public void testUpate() {
+	public void testUpdate() {
 		 Customer customer = new Customer(2, "razaghulam@gmail.com", new Date(1999-01-01),
 	        		"razaghulam123", "10210101010", "12345");
 		
 		
-		 assertNotNull(test.update(customer, "customer"));
+		 assertNotNull(mockORM.update(customer, "customer"));
 	}
 	
 	@Test 
 	public void testDelete() {
 		Customer customer = new Customer(2, "razaghulam@gmail.com", new Date(1999-01-01),
         		"razaghulam123", "10210101010", "12345");
-		assertNotNull(test.delete(customer, "customer"));
+		assertNotNull(mockORM.delete(customer, "customer"));
 	}
 	
 	@Test
@@ -112,14 +113,14 @@ public class ORMTest {
 		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
         		"razaghulam", "10210101010", "12345");
 		
-		assertNotNull(test.findByName(customer, "customer")); 
+		assertNotNull(mockORM.findByName(customer, "customer")); 
 	}
 	
 	@Test 
 	public void testFindById() {
 		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
         		"razaghulam", "10210101010", "12345");
-		assertNotNull(test.findById(customer, "customer")); 
+		assertNotNull(mockORM.findById(customer, "customer")); 
 
 	}
 }
