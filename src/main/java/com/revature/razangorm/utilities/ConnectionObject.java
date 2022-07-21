@@ -1,4 +1,4 @@
-package com.revature.razang.utilities;
+package com.revature.razangorm.utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
