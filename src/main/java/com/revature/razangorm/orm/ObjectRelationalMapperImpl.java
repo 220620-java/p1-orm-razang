@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.revature.razangorm.utilities.ConnectionObject;
 
@@ -191,6 +193,31 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			e.printStackTrace();
 		}
 		return obj;
+	}
+
+	public void updateField (String idName, int id, Map<String, Object> fields,  String tableName) {
+		try (Connection conn = connObj.getConnection()) {
+			List<String> keys = new ArrayList<>();
+			for (String key : fields.keySet()) {
+				keys.add(key);
+			}
+
+			conn.setAutoCommit(false);
+			String sql = QueryMapper.updateObjectField(idName, id, keys, tableName); 
+			PreparedStatement st = conn.prepareStatement(sql); 
+			for (int i = 0; i < fields.size(); i++) {
+				st.setObject(i+1, fields.get(keys.get(i)));
+			}
+			int rowUpdated = st.executeUpdate(); 
+
+			if (rowUpdated == 1) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
+		}catch (SQLException | SecurityException | IllegalArgumentException e) {
+			e.printStackTrace();
+		}
 	}
 
 	

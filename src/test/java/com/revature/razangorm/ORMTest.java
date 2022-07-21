@@ -7,8 +7,11 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,6 +26,7 @@ import com.revature.razangorm.models.Customer;
 import com.revature.razangorm.models.User;
 import com.revature.razangorm.orm.ObjectRelationalMapper;
 import com.revature.razangorm.orm.ObjectRelationalMapperImpl;
+import com.revature.razangorm.orm.QueryMapper;
 import com.revature.razangorm.utilities.ConnectionObject;
 
 @ExtendWith (MockitoExtension.class)
@@ -123,5 +127,35 @@ public class ORMTest {
         		"razaghulam", "10210101010", "12345");
 		assertNotNull(mockORM.findById(customer, "customer")); 
 
+	}
+
+	@Test
+	public void updateFieldQuery () {
+		Map<String, Object> fields = new HashMap<String, Object>();
+		fields.put ("phone", "1231231234");
+		fields.put ("username", "newUsername");
+		fields.put ("email", "newEmail@email.com");
+		String expected = "UPDATE users SET phone=?,email=?,username=? WHERE userid=1";
+		List<String> keys = new ArrayList<>();
+		for (String key : fields.keySet()) {
+			keys.add(key);
+		}
+		String actual = QueryMapper.updateObjectField("userid", 1, keys, "users");
+		assertEquals(expected, actual);
+		actual = "";
+		for (int i = 0; i < fields.size(); i++) {
+			actual += (fields.get(keys.get(i)).toString());
+		}
+		expected = "1231231234newEmail@email.comnewUsername";
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void updateField () {
+		Map<String, Object> fields = new HashMap<String, Object>();
+		fields.put ("phone", "1231231234");
+		fields.put ("username", "newUsername");
+		fields.put ("email", "newEmail@email.com");
+		nonMockORM.updateField("userid", 1, fields, "users");
 	}
 }
