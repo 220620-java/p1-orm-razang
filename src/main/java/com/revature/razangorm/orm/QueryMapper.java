@@ -82,7 +82,13 @@ public class QueryMapper {
     			id = field.getName(); 
     			val =  field.get(obj).toString(); 
     		} else if (!field.isAnnotationPresent(Id.class)) {
-    			updateFields = updateFields.concat(field.getName().toString()).concat("='").concat(field.get(obj).toString()).concat("',");
+    			updateFields = updateFields.concat(field.getName().toString()).concat("='"); 
+    			if (field.get(obj) == null) {
+    				updateFields = updateFields.concat(null).concat("', "); 
+    			} else {
+    				updateFields = updateFields.concat(field.get(obj).toString()).concat("',");
+
+    			}
     		}
     	}
     	// Remove the trailing comma. 
