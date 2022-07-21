@@ -113,16 +113,23 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	public Object findById(Object obj, String c) {
 		try (Connection conn = connObj.getConnection()) {
 			String sql = QueryMapper.findObjectById(obj, c); 
+			Class<? extends Object> objClass = obj.getClass();
+
+			Field[] fields = QueryMapper.getFields(objClass);
 			
 			Statement st = conn.createStatement();
 			ResultSet result =st.executeQuery(sql);
 			
 			if  (result.next()) {
+				for (int i = 0; i < fields.length; i++) {
+					fields[i].setAccessible(true);
+					fields[i].set(obj,result.getObject(fields[i].getName())); 
+				}
 				return obj; 
 			}else {
 				return null; 
 			}
-		}catch (SQLException | SecurityException e) {
+		}catch (SQLException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return obj;
