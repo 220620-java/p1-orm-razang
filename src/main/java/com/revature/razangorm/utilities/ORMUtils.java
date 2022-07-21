@@ -1,11 +1,11 @@
-package com.revature.razang.utilities;
+package com.revature.razangorm.utilities;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class BankUtils {
+public class ORMUtils {
 
 	/**
 	 * Generates a random account number.

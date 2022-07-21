@@ -1,9 +1,9 @@
 package com.revature.razangorm.models;
 import java.sql.Date;
 
-import com.revature.razang.utilities.BankUtils;
 import com.revature.razangorm.annotations.Id;
 import com.revature.razangorm.annotations.Username;
+import com.revature.razangorm.utilities.ORMUtils;
 
 /**
  * @author Raza Ghulam
@@ -30,8 +30,8 @@ public class User {
 		this.phone = phone;
 		
 		// Encrypt password
-		this.salt = BankUtils.generateSalt();
-		this.password = BankUtils.generateEncryptedPassword(password, this.salt);
+		this.salt = ORMUtils.generateSalt();
+		this.password = ORMUtils.generateEncryptedPassword(password, this.salt);
 	}
 	
 	public User(int userId, String username, Date birthDate, String email, String phone, String password, byte[] salt) {

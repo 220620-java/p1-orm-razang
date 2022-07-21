@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.revature.razang.utilities.ConnectionObject;
+import com.revature.razangorm.utilities.ConnectionObject;
 
 /**
  * 
@@ -80,16 +80,23 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 				System.out.println("No username annotation found!");
 				return null;
 			}
+
+			Class<? extends Object> objClass = obj.getClass();
+
+			Field[] fields = QueryMapper.getFields(objClass);
 			
 			Statement st = conn.createStatement();
 			ResultSet result =st.executeQuery(sql);
 			
-			if  (result.next()) {
-				return obj; 
-			}else {
-				return null; 
+			if (result.next()) {
+				Object myObj = objClass.getConstructor().newInstance();
+				for (int i = 0; i < fields.length; i++) {
+					fields[i].setAccessible(true);
+					fields[i].set(myObj,result.getObject(fields[i].getName())); 
+				}
+				return myObj;
 			}
-		}catch (SQLException | NoSuchFieldException | SecurityException e) {
+		}catch (SQLException | NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 		return obj;

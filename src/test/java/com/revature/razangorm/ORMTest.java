@@ -18,12 +18,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.revature.razang.utilities.ConnectionObject;
 import com.revature.razangorm.models.Account;
 import com.revature.razangorm.models.Customer;
 import com.revature.razangorm.models.User;
 import com.revature.razangorm.orm.ObjectRelationalMapper;
 import com.revature.razangorm.orm.ObjectRelationalMapperImpl;
+import com.revature.razangorm.utilities.ConnectionObject;
 
 @ExtendWith (MockitoExtension.class)
 public class ORMTest {
