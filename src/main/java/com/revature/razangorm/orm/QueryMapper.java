@@ -3,7 +3,11 @@ package com.revature.razangorm.orm;
 // java imports
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -93,6 +97,17 @@ public class QueryMapper {
     	
     	return returnQuery; 
     }
+
+    public static String updateObjectField(String idName, int id, List<String> fields,  String tableName) {
+    	String returnQuery = "UPDATE " + tableName + " SET ";
+        StringJoiner joiner = new StringJoiner(",");
+        for (String key : fields) {
+            joiner.add(key + "=?");
+        }
+        returnQuery += joiner.toString();
+        returnQuery += " WHERE " + idName + "=" + id;
+    	return returnQuery; 
+    }
     
 	 
     /**
@@ -101,10 +116,8 @@ public class QueryMapper {
      * @return
      */
     public static String findAll(String tableName) {
-    	
     	String returnQuery = "select * from " + tableName; 
 		return returnQuery;
-    	
     }
     
     /**
