@@ -115,7 +115,6 @@ public class QueryMapper {
     	return returnQuery; 
     }
     
-	 
     /**
      * 
      * @param tableName
@@ -125,7 +124,20 @@ public class QueryMapper {
     	String returnQuery = "select * from " + tableName; 
 		return returnQuery;
     }
+
     
+    /** Get a value from a table where the id matches
+     * @param idName
+     * @param id
+     * @param fieldName
+     * @param tableName
+     * @return String
+     */
+    public static String getValueById (String idName, int id, String fieldName, String tableName) {
+        String returnQuery = "SELECT " + fieldName + " FROM " + tableName + " WHERE " + idName + "=" + id;
+        return returnQuery;
+    }
+
     /**
      * 
      * @param obj

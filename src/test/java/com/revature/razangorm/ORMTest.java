@@ -158,4 +158,11 @@ public class ORMTest {
 		fields.put ("email", "newEmail@email.com");
 		nonMockORM.updateField("userid", 1, fields, "users");
 	}
+
+	@Test
+	public void getValueQuery () {
+		String actual = QueryMapper.getValueById("userid", 5, "username", "users");
+		String expected = "SELECT username FROM users WHERE userid=5";
+		assertEquals (expected, actual);
+	}
 }
