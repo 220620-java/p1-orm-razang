@@ -18,7 +18,15 @@ Project 1 is part of a Revature curriculum to learn basic web application struct
 ### Installing
 
 * Clone this repository and open it with Eclipse or VSCode.
-* Compile with _mvn clean package_ and deploy the .jar in your Java application under _/lib/_
+* Compile with _mvn clean package install_ and put the ORM as a dependency in pom.xml
+```
+<!-- Razang ORM -->
+<dependency>
+  <groupId>com.revature</groupId>
+  <artifactId>razangorm</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
 * Database credentials must be put in src/main/resources/ as database.properties with the following fields inside:
 ```
 url=jdbc:postgresql://????:5432/postgres?currentSchema=myBank
