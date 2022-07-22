@@ -4,10 +4,7 @@ package com.revature.razangorm.orm;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +33,7 @@ public class QueryMapper {
         String insertQuery = "INSERT INTO " + tableName + " (";
         String valuesQuery = " VALUES (default, ";
         StringJoiner insertJoiner = new StringJoiner(",");
-        StringJoiner valuesJoiner = new StringJoiner(",");
+        // StringJoiner valuesJoiner = new StringJoiner(",");
         Stream<Field> fieldsStream = Arrays.stream(fields);
         fieldsStream.forEach(
             field -> {
@@ -161,7 +158,6 @@ public class QueryMapper {
 					val = field.get(obj).toString();
 					break; 
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
     		}
@@ -215,7 +211,6 @@ public class QueryMapper {
     			try {
 					value = field.get(obj).toString();
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
     			break; 
@@ -243,7 +238,6 @@ public class QueryMapper {
                 try {
 					idValue = field.get(obj).toString();
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
                 break;
@@ -257,18 +251,5 @@ public class QueryMapper {
          // Create the SELECT fields
         return "SELECT * FROM " + tableName + " WHERE " + idField + "=" + idValue;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }
