@@ -2,6 +2,7 @@ package com.revature.razangorm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -118,7 +119,7 @@ public class ORMTest {
 		Customer customer = new Customer(1, "raza@gmail.com", new Date(1999-01-01),
         		"razaghulam", "10210101010", "12345");
 		
-		assertNotNull(mockORM.findByName(customer, "customer")); 
+		assertNull(nonMockORM.findByName(customer, "customer")); 
 	}
 	
 	@Test 

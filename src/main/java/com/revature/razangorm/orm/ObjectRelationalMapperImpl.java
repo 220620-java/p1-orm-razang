@@ -103,7 +103,7 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 		}catch (SQLException | NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-		return obj;
+		return null;
 	}
 
 	
