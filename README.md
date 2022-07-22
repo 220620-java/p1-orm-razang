@@ -39,7 +39,7 @@ pwd=????
 * Use basic CRUD methods the ORM offers to interact with the database and its tables.
 ```
 ObjectRelationalMapper orm = new ObjectRelationalMapperImpl(); // Instantiate the ORM
-orm.create (User user); // Inserts the user object into the database with all of its fields
+orm.create (user, tableName); // Inserts the user object into the database with all of its fields
 ```
 * Custom annotations are used to filter fields and grab superclass fields.
 ```
