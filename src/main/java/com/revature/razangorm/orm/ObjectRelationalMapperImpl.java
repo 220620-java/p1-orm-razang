@@ -117,10 +117,11 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 	 */
 	@Override
 	public Object findById(Object obj, String c) {
+		Class<? extends Object> objClass = obj.getClass();
 		try (Connection conn = connObj.getConnection()) {
-			String sql = QueryMapper.findObjectById(obj, c); 
-			Class<? extends Object> objClass = obj.getClass();
+			Object myObj = objClass.getConstructor().newInstance();
 
+			String sql = QueryMapper.findObjectById(obj, c); 
 			Field[] fields = QueryMapper.getFields(objClass);
 			
 			Statement st = conn.createStatement();
@@ -129,16 +130,16 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			if  (result.next()) {
 				for (int i = 0; i < fields.length; i++) {
 					fields[i].setAccessible(true);
-					fields[i].set(obj,result.getObject(fields[i].getName())); 
+					fields[i].set(myObj,result.getObject(fields[i].getName())); 
 				}
-				return obj; 
+				return myObj; 
 			}else {
 				return null; 
 			}
-		}catch (SQLException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+		}catch (SQLException | SecurityException | IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-		return obj;
+		return null;
 	}
 	
 	/** 
