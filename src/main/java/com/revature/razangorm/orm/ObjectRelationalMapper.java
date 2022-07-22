@@ -10,5 +10,6 @@ public interface ObjectRelationalMapper {
 	public Object delete(Object obj, String c); 
 	public Object findByName(Object obj, String c); 
 	public Object findById(Object obj, String c);
+	public Object getValueById(String idName, int id, String fieldName, String tableName);
 	public void updateField (String idName, int id, Map<String, Object> fields,  String tableName);
 }

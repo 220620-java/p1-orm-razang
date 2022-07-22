@@ -1,18 +1,17 @@
 package com.revature.razangorm.orm;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.revature.razangorm.utilities.ConnectionObject;
 /**
@@ -48,7 +47,12 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			
 			for (int i = 1; i <fields.length; i++) {
 				fields[i].setAccessible(true);
-				st.setObject(i, fields[i].get(obj));
+				try {
+					st.setObject(i, fields[i].get(obj));
+				} catch (SQLException e) {
+					// To try and catch enums
+					st.setObject(i, fields[i].get(obj), Types.VARCHAR);
+				} 
 			}
 			
 			int rowsAdded = st.executeUpdate(); 
@@ -245,6 +249,25 @@ public class ObjectRelationalMapperImpl implements ObjectRelationalMapper {
 			e.printStackTrace();
 		}
 		return obj;
+	}
+
+	@Override
+	public Object getValueById(String idName, int id, String fieldName, String tableName) {
+		try (Connection conn = connObj.getConnection()) {
+			String sql = QueryMapper.getValueById(idName, id, fieldName, tableName); 
+
+			Statement st = conn.createStatement();
+			ResultSet result = st.executeQuery(sql);
+			
+			if (result.next()) {
+				return result.getObject("fieldName");
+			}else {
+				return null; 
+			}
+		}catch (SQLException | SecurityException | IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
